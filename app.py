@@ -13,42 +13,31 @@ from langchain_community.vectorstores import Chroma
 # ---------------------------
 # LOAD CONFIGURATION
 # ---------------------------
+# ---------------------------
+# LOAD CONFIGURATION
+# ---------------------------
+import os
+from dotenv import load_dotenv
+
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 ENV_PATH = os.path.join(BASE_DIR, ".env")
 
 # Local .env support
 load_dotenv(dotenv_path=ENV_PATH)
 
-# Render + Local Environment Variables
+# Render + Local Environment Variables ONLY
 GROQ_API_KEY = os.getenv("GROQ_API_KEY")
 MODEL_NAME = os.getenv("MODEL_NAME", "llama-3.1-8b-instant")
 CHROMA_DB_DIR = os.getenv("CHROMA_DB_DIR", "/tmp/chroma_db")
 
-# Fix relative local paths
+# Convert relative path locally
 if not CHROMA_DB_DIR.startswith("/tmp") and not os.path.isabs(CHROMA_DB_DIR):
     CHROMA_DB_DIR = os.path.join(BASE_DIR, CHROMA_DB_DIR)
 
-# Validate API Key
+# Validation
 if not GROQ_API_KEY:
-    st.error("GROQ API Key not found. Add it in Render Environment Variables or local .env")
+    st.error("GROQ API Key not found. Set it in Render Environment Variables.")
     st.stop()
-
-# Cloud-safe Chroma path
-CHROMA_DB_DIR = (
-    st.secrets["CHROMA_DB_DIR"]
-    if "CHROMA_DB_DIR" in st.secrets
-    else os.getenv("CHROMA_DB_DIR", "/tmp/chroma_db")
-)
-
-# Local absolute path fix
-if not CHROMA_DB_DIR.startswith("/tmp") and not os.path.isabs(CHROMA_DB_DIR):
-    CHROMA_DB_DIR = os.path.join(BASE_DIR, CHROMA_DB_DIR)
-
-# Validate API Key
-if not GROQ_API_KEY:
-    st.error("GROQ API Key not found. Add it in Streamlit Secrets or local .env")
-    st.stop()
-
 
 
 # STREAMLIT CONFIG
